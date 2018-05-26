@@ -288,6 +288,7 @@ Output
         }
     }
 
+
     // Working solution
     public static int mincoinDP(int[] c, int total) {
         int[][] a = new int[c.length + 1][total + 1];
@@ -310,7 +311,7 @@ Output
             }
         }
 
-        return a[c.length][total];
+        return a[c.length][total] == Integer.MAX_VALUE - total ? -1 : a[c.length][total];
     }
 
 
