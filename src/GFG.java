@@ -1,6 +1,90 @@
+import com.sun.deploy.util.ParameterUtil;
+
 import java.util.Scanner;
 
+
 public class GFG {
+
+    public static void main_hopWsysDP(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int numOfTestCases = in.nextInt();
+        for (int i = 0; i < numOfTestCases; i++) {
+            System.out.println(hopWsysDP(in.nextInt()));
+        }
+    }
+
+    private static long hopWsysDP(int n) {
+        if(n == 0) return 0;
+        else if(n == 1) return 1;
+        else if(n == 2) return 2;
+
+        long[] h = new long[n+1];
+        h[0] = 1;
+        h[1] = 1;
+        h[2] = 2;
+
+        int i=3;
+
+        while (i<=n){
+            h[i] = h[i-1] + h[i-2] + h[i-3];
+            i++;
+        }
+        return h[n];
+    }
+
+    // Recursive version
+    private static int hopWsys(int n) {
+        if(n == 0) return 1;
+        if(n < 0) return 0;
+
+        int x = hopWsys(n-1);
+        int y = hopWsys(n-2);
+        int z = hopWsys(n-3);
+
+        return x+y+z;
+    }
+
+    public static void mainMergeLists(String[] args) {
+        Node a = new Node(10);
+        Node b = new Node(20);
+        Node c = new Node(30);
+
+        Node d = new Node(15);
+        Node e = new Node(17);
+
+        a.next = b;
+        b.next = c;
+
+        d.next = e;
+
+        new GFG().printNodes(new GFG().MergeLists(a, d));
+    }
+
+    // Recursive working solution
+    Node MergeLists(Node headA, Node headB) {
+
+        if (headA == null) return headB;
+        if (headB == null) return headA;
+
+        Node head = null;
+
+        if (headA.data < headB.data) {
+            head = headA;
+            head.next = MergeLists(headA.next, headB);
+        } else {
+            head = headB;
+            head.next = MergeLists(headA, headB.next);
+        }
+
+        return head;
+    }
+
+    private void printNodes(Node h1) {
+        while (h1 != null) {
+            System.out.print(h1.data + " ");
+            h1 = h1.next;
+        }
+    }
 
     //Minimum sum difference partition problem
     /*
@@ -31,7 +115,7 @@ Output :
 23
      */
 
-    public static void main(String[] args) {
+    public static void main_minPartitionDP(String[] args) {
         Scanner in = new Scanner(System.in);
         int numOfTestCases = in.nextInt();
         for (int i = 0; i < numOfTestCases; i++) {
@@ -40,7 +124,7 @@ Output :
             int sumOfS1 = 0;
             for (int j = 0; j < sizeOfArray; j++) {
                 s1[j] = in.nextInt();
-                sumOfS1+= s1[j];
+                sumOfS1 += s1[j];
             }
             System.out.println(minPartition(s1, 0, sumOfS1));
         }
@@ -50,24 +134,24 @@ Output :
     // Question: how do I use 2d matrix to solve this problem, How do i get 2d matrix intuition from recursive solution, why I am not thinking in right direction
     // My thought process:
     // in 2d matrix, columns with 0 to sum of s1, row from 0 to all elements of s1. I am trying to fill it using knapsack and minimum number of coin problems.
-    private static int minPartitionDP(int[] s1, int total){
-        int a[][] = new int[s1.length+1][total+1];
+    private static int minPartitionDP(int[] s1, int total) {
+        int a[][] = new int[s1.length + 1][total + 1];
 
         return a[s1.length][total];
     }
 
     // Recursive working
     private static int minPartition(int[] s1, int index, int difference) {
-        if(index >= s1.length) return difference;
+        if (index >= s1.length) return difference;
 
-        int x = minPartition(s1, index+1, difference);
+        int x = minPartition(s1, index + 1, difference);
 
         // difference - s1[index] --> Sum of remaining S1 array(Partition)
         // Since we are adding s1[index] to s2 now overall difference should be reduce s1[index] 2 times,
         // one because it was subtracted from S1 sum and other because it is added in S2.
-        int y = minPartition(s1, index + 1, Math.abs((difference - s1[index])- s1[index]));
+        int y = minPartition(s1, index + 1, Math.abs((difference - s1[index]) - s1[index]));
 
-        return x<y? x: y;
+        return x < y ? x : y;
     }
 
     //Driver function for printShortedCommonSuperSequence
@@ -188,9 +272,9 @@ Output
 4
      */
 
-    public static void main4(String... args){
+    public static void main_mincoinDP(String... args) {
         Scanner in = new Scanner(System.in);
-        int numberOfTests= in.nextInt();
+        int numberOfTests = in.nextInt();
 
         for (int i = 0; i < numberOfTests; i++) {
             int total = in.nextInt();
@@ -200,42 +284,28 @@ Output
                 c[j] = in.nextInt();
             }
             //System.out.println(mincoin(c,total,0));
-            System.out.println(mincoinDP(c,total));
+            System.out.println(mincoinDP(c, total));
         }
     }
 
-    /*
-Wrong Answer. !!!Wrong Answer
-Possibly your code doesn't work correctly for multiple test-cases (TCs).
-The first test case where your code failed:
-
-Input:
-4759 4
-31 90 8 36
-
-Its Correct output is:
-59
-
-And Your Code's output is:
-60
-     */
-    // Not working for above test case
-    public static int mincoinDP(int[] c, int total){
-        int[][] a = new int[c.length+1][total+1];
+    // Working solution
+    public static int mincoinDP(int[] c, int total) {
+        int[][] a = new int[c.length + 1][total + 1];
 
         for (int i = 0; i <= c.length; i++) {
             a[i][0] = 0;
         }
         for (int j = 1; j <= total; j++) {
-            a[0][j] = Integer.MAX_VALUE- total;
+            a[0][j] = Integer.MAX_VALUE - total;
         }
 
-        for (int i = 1; i <= c.length ; i++) {
+        for (int i = 1; i <= c.length; i++) {
             for (int j = 1; j <= total; j++) {
-                if(c[i-1] > j) {
-                    a[i][j] = Integer.MAX_VALUE -total;
-                }else {
-                    a[i][j] = Math.min(a[i-1][j], 1 + a[i][j-c[i-1]]);
+                if (c[i - 1] > j) {
+                    //a[i][j] = Integer.MAX_VALUE - total;
+                    a[i][j] = a[i-1][j];
+                } else {
+                    a[i][j] = Math.min(a[i - 1][j], 1 + a[i][j - c[i - 1]]);
                 }
             }
         }
@@ -243,19 +313,25 @@ And Your Code's output is:
         return a[c.length][total];
     }
 
+
+    public static void main_mincoin(String[] args) {
+        int[] array = new int[] {31, 90, 8, 36};
+        System.out.println(mincoin(array, 4759, 0));
+    }
+
     //working recursive solution for mincoin
     public static int mincoin(int[] c, int total, int i) {
 
         if (total == 0) return 0;
-        if (i>=c.length) return Integer.MAX_VALUE;
+        if (i >= c.length) return Integer.MAX_VALUE-total;
 
 
-        int x=Integer.MAX_VALUE, y=Integer.MAX_VALUE;
+        int x = Integer.MAX_VALUE, y = Integer.MAX_VALUE;
 
-        if(total-c[i]>= 0){
-            x = 1 + mincoin(c, total-c[i], i);
+        if (total - c[i] >= 0) {
+            x = 1 + mincoin(c, total - c[i], i);
         }
-        y = mincoin(c, total, i+1);
+        y = mincoin(c, total, i + 1);
 
         return Math.min(x, y);
     }
