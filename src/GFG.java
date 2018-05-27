@@ -1,9 +1,90 @@
-import com.sun.deploy.util.ParameterUtil;
-
+import java.util.HashMap;
 import java.util.Scanner;
 
 
 public class GFG {
+
+    //https://practice.geeksforgeeks.org/problems/longest-path-in-a-matrix/0
+    //https://www.geeksforgeeks.org/find-the-longest-path-in-a-matrix-with-given-constraints/
+    public static void main(String[] args) {
+
+    }
+
+    //https://practice.geeksforgeeks.org/problems/special-matrix/0
+    public static void main_mazeWays(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int numOfTestCases = in.nextInt();
+        for (int i = 0; i < numOfTestCases; i++) {
+            int rows = in.nextInt();
+            int cols = in.nextInt();
+            int blocks = in.nextInt();
+            int[][] array = new int[rows][cols];
+            for (int j = 0; j < blocks; j++) {
+                int row = in.nextInt();
+                int col = in.nextInt();
+                array[row-1][col-1] = -1;
+            }
+            System.out.println(mazeWays(array, 0, 0));
+        }
+    }
+
+
+    // Recursive version of solution, DP version was easy and run through solution given
+    private static int mazeWays(int[][] array, int i, int j) {
+
+        if(i >= array.length || j >= array[0].length ) return 0;
+
+        if(i == array.length - 1 && j == array[0].length -1 ) return 1;
+
+        int x=0;
+        if( i+1 <= array.length -1 && array[i+1][j] != -1){
+            x = mazeWays(array, i+1, j);
+        }
+
+        int y=0;
+        if( j+1 <= array[0].length -1  && array[i][j+1] != -1){
+            y = mazeWays(array, i, j+1);
+        }
+
+        return (x+y) % 1000000007;
+    }
+
+    //https://www.geeksforgeeks.org/length-of-the-longest-substring-without-repeating-characters/
+    public static void main_findLongestUniqueCharsSubstring(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int numOfTestCases = in.nextInt();
+        for (int i = 0; i < numOfTestCases; i++) {
+            HashMap<Character, Integer> map = new HashMap<>();
+            char[] chars = in.next().toCharArray();
+            map.put(chars[0], 1);
+            System.out.println(findLongestUniqueCharsSubstring(chars, 1, 1, map));
+        }
+    }
+
+    // recursive working fine, DP pending
+    private static int findLongestUniqueCharsSubstring(char[] chars, int index, int prevLength, HashMap<Character, Integer> map) {
+
+        // When index has already covered entire array
+        if(index >= chars.length) return prevLength;
+
+        int x=0; int y=0;
+
+        //if (chars[index] == chars[index-1]){
+        if(map.containsKey(chars[index])){
+            map.clear();
+            map.put(chars[index], 1);
+            x = findLongestUniqueCharsSubstring(chars, index + 1, 1, map);
+        }else {
+            map.put(chars[index], 1);
+            x = findLongestUniqueCharsSubstring(chars, index + 1, 1 + prevLength, map);
+        }
+
+        map.clear();
+        y = findLongestUniqueCharsSubstring(chars, index + 1, 0, map);
+
+        //return Math.max(prevLength, x);
+        return x>y ? (x>prevLength ? x : prevLength) : y;
+    }
 
     public static void main_hopWsysDP(String[] args) {
         Scanner in = new Scanner(System.in);
@@ -144,8 +225,10 @@ Output :
     private static int minPartition(int[] s1, int index, int difference) {
         if (index >= s1.length) return difference;
 
+        //Not adding element to other partition (S2)
         int x = minPartition(s1, index + 1, difference);
 
+        // Here we are adding element to other partition (S2)
         // difference - s1[index] --> Sum of remaining S1 array(Partition)
         // Since we are adding s1[index] to s2 now overall difference should be reduce s1[index] 2 times,
         // one because it was subtracted from S1 sum and other because it is added in S2.
